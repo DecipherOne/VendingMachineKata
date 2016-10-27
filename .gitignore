@@ -1,2 +1,6 @@
 .sass-cache/
 *.css.map
+/nbproject/private/
+/nbproject/
+/static/build/node_modules/
+/static/build/npm-debug.log
