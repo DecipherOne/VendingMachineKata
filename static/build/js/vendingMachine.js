@@ -12,7 +12,6 @@
     VendOMatic.coinSlot = VendOMatic.coinSlot || {};
     VendOMatic.LCD = VendOMatic.LCD || {};
     VendOMatic.coinBank = VendOMatic.coinBank || {};
-    VendOMatic.coinBank.bankTotal = VendOMatic.coinBank.bankTotal || {};
     
     var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot,
     bankNickles,bankDimes,bankQuarters,bankTotalHoldings,
