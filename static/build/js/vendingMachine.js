@@ -12,6 +12,7 @@
     VendOMatic.coinSlot = VendOMatic.coinSlot || {};
     VendOMatic.LCD = VendOMatic.LCD || {};
     VendOMatic.coinBank = VendOMatic.coinBank || {};
+    VendOMatic.products = VendOMatic.products || {};
     
     var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot,
     bankNickles,bankDimes,bankQuarters,bankTotalHoldings,
@@ -105,6 +106,10 @@
         }
     };
     
+    VendOMatic.LCD.ShowThankYou = function(){
+        return "THANK YOU";
+    };
+    
     VendOMatic.coinBank.CanMakeChange = function (){
         
         if(bankTotalHoldings===0){
@@ -129,10 +134,42 @@
         bankTotalHoldings = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
     };
     
+    VendOMatic.coinBank.AddSlotChangeToBank = function(){
+      
+        
+        for(var i=0;i<numOfDimesInSlot;i++){
+            bankDimes += 1;
+        }
+        
+        for(var a=0;a<numOfNickelsInSlot;a++){
+            bankNickles += 1;
+        }
+        
+        for(var b=0;b<numOfQuartersInSlot;b++){
+            bankQuarters += 1;
+        }
+        bankTotalHoldings = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
+        SetCurrentTotalPurchaseAmount(0);
+        ClearCoinSlotCache();
+    }
+    
     VendOMatic.coinBank.GetBankTotal = function(){
         return bankTotalHoldings;
     };
     
+    VendOMatic.products.Order = function(prodName){
+        switch(prodName.toString().toUpperCase()){
+            case "COLA":{
+                    if(currentTotalPurchaseAmount>=1.0){
+                        VendOMatic.coinBank.AddSlotChangeToBank();
+                        return VendOMatic.LCD.ShowThankYou();
+                    }
+                    break;
+            } 
+        }
+    };
+    
+    VendOMatic.products.dispenseItem
     function CalcValueOfCoins(numN,numD,numQ){
      
         var  n = 0,

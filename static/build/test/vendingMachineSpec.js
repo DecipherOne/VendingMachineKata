@@ -75,8 +75,21 @@ describe("Vending Machine",function(){
           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.25");
        });
        
+       it("When the button is pressed and enough money has been inserted, the product is dispensed and the machine displays THANK YOU",function(){
+           var c = 0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<4);
+           
+           expect(VendOMatic.products.Order("cola")).to.equal("THANK YOU");
+           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
+       });
+       
       
    });
+   
+   
    
 });
 
