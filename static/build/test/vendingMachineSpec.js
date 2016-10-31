@@ -63,7 +63,7 @@ describe("Vending Machine",function(){
       
        it("Shows INSERT COIN when no Coin is inserted.",function(){
            VendOMatic.coinBank.AddChangeToBank(2,2,3);
-           expect(VendOMatic.coinBank.bankTotal).to.equal(1.05);
+           expect(VendOMatic.coinBank.GetBankTotal()).to.equal(1.05);
            VendOMatic.coinSlot.ReturnInsertedCoins();
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
        });

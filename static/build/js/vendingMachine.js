@@ -108,7 +108,7 @@
     
     VendOMatic.coinBank.CanMakeChange = function (){
         
-        if(this.bankTotal===0){
+        if(bankTotalHoldings===0){
             return false;
         }
         else{
@@ -120,16 +120,19 @@
        bankNickles = 0; 
        bankDimes = 0; 
        bankQuarters = 0; 
-       this.bankTotal = 0; 
+       bankTotalHoldings = 0; 
     };
     
     VendOMatic.coinBank.AddChangeToBank = function(numNickles,numDimes,numQuarters){
         bankNickles += numNickles;
         bankDimes += numDimes;
         bankQuarters += numQuarters;
-        this.bankTotal = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
+        bankTotalHoldings = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
     };
     
+    VendOMatic.coinBank.GetBankTotal = function(){
+        return bankTotalHoldings;
+    };
     
     function CalcValueOfCoins(numN,numD,numQ){
      
