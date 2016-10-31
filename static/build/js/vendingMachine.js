@@ -110,6 +110,15 @@
         return "THANK YOU";
     };
     
+    VendOMatic.LCD.ShowItemPrice = function(prodName){
+        switch(prodName.toString().toUpperCase()){
+            case "COLA":{
+                    return "PRICE : $1.00";
+                    break;
+            }
+        }
+    };
+    
     VendOMatic.coinBank.CanMakeChange = function (){
         
         if(bankTotalHoldings===0){
@@ -151,7 +160,7 @@
         bankTotalHoldings = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
         SetCurrentTotalPurchaseAmount(0);
         ClearCoinSlotCache();
-    }
+    };
     
     VendOMatic.coinBank.GetBankTotal = function(){
         return bankTotalHoldings;
@@ -163,13 +172,17 @@
                     if(currentTotalPurchaseAmount>=1.0){
                         VendOMatic.coinBank.AddSlotChangeToBank();
                         return VendOMatic.LCD.ShowThankYou();
+                    }else{
+                        return VendOMatic.LCD.ShowItemPrice("COLA");
                     }
                     break;
             } 
+            
+            
         }
     };
     
-    VendOMatic.products.dispenseItem
+  
     function CalcValueOfCoins(numN,numD,numQ){
      
         var  n = 0,
