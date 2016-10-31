@@ -7,6 +7,7 @@
 require('../js/vendingMachine');
 var expect = require('../node_modules/chai/chai').expect;
 
+
 describe("Vending Machine",function(){
     
     describe("Coin Slot",function(){
@@ -52,8 +53,17 @@ describe("Vending Machine",function(){
    
    
    describe("Vending Display",function(){
+       
+       it("Displays EXACT CHANGE ONLY when the machine is not able to make change with money currently in the machine.",function(){
+           
+           VendOMatic.coinBank.EmptyBank();
+           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("EXACT CHANGE ONLY");
+           
+       });
       
        it("Shows INSERT COIN when no Coin is inserted.",function(){
+           VendOMatic.coinBank.AddChangeToBank(2,2,3);
+           expect(VendOMatic.coinBank.bankTotal).to.equal(1.05);
            VendOMatic.coinSlot.ReturnInsertedCoins();
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
        });
@@ -64,11 +74,9 @@ describe("Vending Machine",function(){
           VendOMatic.coinSlot.InsertCoin("QUARTER");
           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.25");
        });
-           
        
+      
    });
-   
-   
    
 });
 

@@ -4,18 +4,19 @@
  * and open the template in the editor.
  */
 
-//TO DO : Remove these requires before actual build, just needed for testing
-var $ = require('../node_modules/jquery/dist/jquery.js');
 
-(function OperateVendingMachine($,VendOMatic){
+(function OperateVendingMachine(VendOMatic){
     
     
     VendOMatic = VendOMatic|| {};
     VendOMatic.coinSlot = VendOMatic.coinSlot || {};
     VendOMatic.LCD = VendOMatic.LCD || {};
-    var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot = 0;
+    VendOMatic.coinBank = VendOMatic.coinBank || {};
+    VendOMatic.coinBank.bankTotal = VendOMatic.coinBank.bankTotal || {};
     
-    var currentTotalPurchaseAmount = 0.0;
+    var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot,
+    bankNickles,bankDimes,bankQuarters,bankTotalHoldings,
+    currentTotalPurchaseAmount = 0;
     
     VendOMatic.coinSlot.ValidateInsertedCoin = function(COINTYPE){
         
@@ -74,11 +75,9 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
             amount -= 0.10;
         }
         
-        
         for(var a=0;a<numOfNickelsInSlot;a++){
             amount -= 0.05;
         }
-        
         
         for(var b=0;b<numOfQuartersInSlot;b++){
             amount -= 0.25;
@@ -92,17 +91,14 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
         return currentTotalPurchaseAmount;
     };
     
-    SetCurrentTotalPurchaseAmount = function(amount){
-        var money = parseFloat(amount);
-        money = decimalAdjust('round', money, -2);
-        currentTotalPurchaseAmount = money;
-    };
-    
     VendOMatic.LCD.ShowCurrentPurchaseAmount = function(){
         
         var amount = currentTotalPurchaseAmount;
         
-        if(amount<= 0){
+        if(!VendOMatic.coinBank.CanMakeChange()){
+           return "EXACT CHANGE ONLY"; 
+        }
+        else if(amount<= 0){
             return "INSERT COIN";
         }
         else{
@@ -110,12 +106,59 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
         }
     };
     
+    VendOMatic.coinBank.CanMakeChange = function (){
+        
+        if(this.bankTotal===0){
+            return false;
+        }
+        else{
+            return true;    
+        }
+    };
+    
+    VendOMatic.coinBank.EmptyBank = function(){
+       bankNickles = 0; 
+       bankDimes = 0; 
+       bankQuarters = 0; 
+       this.bankTotal = 0; 
+    };
+    
+    VendOMatic.coinBank.AddChangeToBank = function(numNickles,numDimes,numQuarters){
+        bankNickles += numNickles;
+        bankDimes += numDimes;
+        bankQuarters += numQuarters;
+        this.bankTotal = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
+    };
+    
+    
+    function CalcValueOfCoins(numN,numD,numQ){
+     
+        var  n = 0,
+             d = 0,
+             q = 0;
+     
+             
+        if(numN>0)
+        n = parseFloat(numN) * 0.05;
+        if(numD>0)
+        d = parseFloat(numD) * 0.10;
+        if(numQ>0)
+        q = parseFloat(numQ) * 0.25;
+        
+        return  parseFloat(n+d+q);
+    }
     
     function ClearCoinSlotCache(){
         numOfDimesInSlot = 0;
         numOfNickelsInSlot = 0;
         numOfQuartersInSlot = 0;
     }
+    
+    function SetCurrentTotalPurchaseAmount(amount){
+        var money = parseFloat(amount);
+        money = decimalAdjust('round', money, -2);
+        currentTotalPurchaseAmount = money;
+    };
 
     /**
      * Decimal adjustment of a number.
@@ -147,5 +190,5 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
 
     return VendOMatic;
     
-})($ /*jQuery */,VendOMatic = this.VendOMatic||{});
+})(VendOMatic = this.VendOMatic||{});
 
