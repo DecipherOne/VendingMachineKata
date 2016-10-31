@@ -13,13 +13,14 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
     VendOMatic = VendOMatic|| {};
     VendOMatic.coinSlot = VendOMatic.coinSlot || {};
     VendOMatic.LCD = VendOMatic.LCD || {};
+    var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot = 0;
     
     var currentTotalPurchaseAmount = 0.0;
     
     VendOMatic.coinSlot.ValidateInsertedCoin = function(COINTYPE){
         
         if(COINTYPE.toString().toUpperCase()==="DIME"||
-           COINTYPE.toString().toUpperCase()==="NICKLE"||
+           COINTYPE.toString().toUpperCase()==="NICKEL"||
            COINTYPE.toString().toUpperCase()==="QUARTER"){
        
            return true;
@@ -38,14 +39,17 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
             switch(COINTYPE.toString().toUpperCase()){
                 case "DIME":{
                         curAmount += 0.10;
+                        numOfDimesInSlot += 1;
                         break;
                 }
-                case "NICKLE":{
+                case "NICKEL":{
                         curAmount += 0.05;
+                        numOfNickelsInSlot += 1;
                         break;
                 }
                 case "QUARTER":{
                         curAmount += 0.25;
+                        numOfQuartersInSlot += 1;
                         break;
                 }
                 default:{
@@ -53,7 +57,7 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
                 }
             }
             
-            VendOMatic.SetCurrentTotalPurchaseAmount(curAmount);
+            SetCurrentTotalPurchaseAmount(curAmount);
             return true;
         }
         else{
@@ -62,11 +66,33 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
         }
     };
     
+    VendOMatic.coinSlot.ReturnInsertedCoins = function(){
+        
+        var amount = currentTotalPurchaseAmount;
+        
+        for(var i=0;i<numOfDimesInSlot;i++){
+            amount -= 0.10;
+        }
+        
+        
+        for(var a=0;a<numOfNickelsInSlot;a++){
+            amount -= 0.05;
+        }
+        
+        
+        for(var b=0;b<numOfQuartersInSlot;b++){
+            amount -= 0.25;
+        }
+        
+        SetCurrentTotalPurchaseAmount(amount);
+        ClearCoinSlotCache();
+    };
+    
     VendOMatic.GetCurrentTotalPurchaseAmount = function(){
         return currentTotalPurchaseAmount;
     };
     
-    VendOMatic.SetCurrentTotalPurchaseAmount = function(amount){
+    SetCurrentTotalPurchaseAmount = function(amount){
         var money = parseFloat(amount);
         money = decimalAdjust('round', money, -2);
         currentTotalPurchaseAmount = money;
@@ -85,6 +111,11 @@ var $ = require('../node_modules/jquery/dist/jquery.js');
     };
     
     
+    function ClearCoinSlotCache(){
+        numOfDimesInSlot = 0;
+        numOfNickelsInSlot = 0;
+        numOfQuartersInSlot = 0;
+    }
 
     /**
      * Decimal adjustment of a number.
