@@ -4,3 +4,5 @@
 /nbproject/
 /static/build/node_modules/
 /static/build/npm-debug.log
+/static/build/sass/
+/static/build/Gruntfile.js
