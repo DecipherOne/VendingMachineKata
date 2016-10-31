@@ -46,6 +46,13 @@ describe("Vending Machine",function(){
            VendOMatic.SetCurrentTotalPurchaseAmount(0.0);
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
        });
+       
+       it("Shows the updated Purchase Amount when coins are inserted.",function(){
+          VendOMatic.SetCurrentTotalPurchaseAmount(0.0);
+          expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
+          VendOMatic.coinSlot.InsertCoin("QUARTER");
+          expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.25");
+       });
            
        
    });

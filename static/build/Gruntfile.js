@@ -39,7 +39,6 @@ module.exports = function(grunt) {
             siteStatic:{
                 src:[
                     'node_modules/jquery/dist/jquery.js',
-                    'node_modules/chart.js/dist/chart.js',
                     'node_modules/requirejs/require.js'
                     
                    
