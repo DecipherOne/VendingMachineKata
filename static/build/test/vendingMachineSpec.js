@@ -85,6 +85,25 @@ describe("Vending Machine",function(){
            
            expect(VendOMatic.products.Order("cola")).to.equal("THANK YOU");
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
+           c=0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<3);
+           
+           expect(VendOMatic.products.Order("chips")).to.equal("THANK YOU");
+           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
+           
+           c=0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<3);
+           
+           expect(VendOMatic.products.Order("candy")).to.equal("THANK YOU");
+           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("INSERT COIN");
+           
+           
        });
        
        it("When an item is ordered without the proper amount, the machine displays PRICE and the price of the item.",function(){
@@ -97,6 +116,26 @@ describe("Vending Machine",function(){
            
            expect(VendOMatic.products.Order("cola")).to.equal("PRICE : $1.00");
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.75");
+           
+           VendOMatic.coinSlot.ReturnInsertedCoins();
+           c = 0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<1);
+           
+           expect(VendOMatic.products.Order("CHIPS")).to.equal("PRICE : $0.50");
+           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.25");
+           
+           VendOMatic.coinSlot.ReturnInsertedCoins();
+           c = 0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<2);
+           
+           expect(VendOMatic.products.Order("CANDY")).to.equal("PRICE : $0.65");
+           expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.5");
        });
        
       

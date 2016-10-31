@@ -116,6 +116,14 @@
                     return "PRICE : $1.00";
                     break;
             }
+            case "CHIPS":{
+                    return "PRICE : $0.50";
+                    break;
+            }
+            case "CANDY":{
+                    return "PRICE : $0.65";
+                    break;
+            }
         }
     };
     
@@ -177,6 +185,24 @@
                     }
                     break;
             } 
+            case "CHIPS":{
+                    if(currentTotalPurchaseAmount>=0.5){
+                        VendOMatic.coinBank.AddSlotChangeToBank();
+                        return VendOMatic.LCD.ShowThankYou();
+                    }else{
+                        return VendOMatic.LCD.ShowItemPrice("CHIPS");
+                    }
+                    break;
+            } 
+            case "CANDY":{
+                    if(currentTotalPurchaseAmount>=0.65){
+                        VendOMatic.coinBank.AddSlotChangeToBank();
+                        return VendOMatic.LCD.ShowThankYou();
+                    }else{
+                        return VendOMatic.LCD.ShowItemPrice("CANDY");
+                    }
+                    break;
+            }
             
             
         }
