@@ -13,10 +13,61 @@
     VendOMatic.LCD = VendOMatic.LCD || {};
     VendOMatic.coinBank = VendOMatic.coinBank || {};
     VendOMatic.products = VendOMatic.products || {};
+    VendOMatic.products.bays =  VendOMatic.products.bays || new Array(3);
     
     var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot,
     bankNickles,bankDimes,bankQuarters,bankTotalHoldings,
     currentTotalPurchaseAmount = 0;
+    
+   function product(name,price,inStock){
+      this.name = name;
+      this.price = parseFloat(price);
+      this.inStock = parseInt(inStock);
+    };
+    
+   
+    VendOMatic.products.StockProducts = function(name,price,inStock){
+        var stocked = false;
+        for(var i=0;i<VendOMatic.products.bays.length;i++){
+            if(VendOMatic.products.bays[i] == null){
+                VendOMatic.products.bays[i] =  new product(name.toUpperCase(),price,inStock);
+                stocked = true;
+                break;
+            }
+            else if(VendOMatic.products.bays[i].name === name.toUpperCase()){
+                
+                VendOMatic.products.bays[i].inStock = inStock;
+                VendOMatic.products.bays[i].price = parseFloat(price);
+                stocked = true;
+                break;
+            }
+        }
+        
+        if(stocked){
+            return true;
+        }
+        else{
+            return false;
+        }
+     
+    };
+    
+    VendOMatic.products.Dispense = function(name){
+        for(var i=0; i<VendOMatic.products.bays.length;i++){
+          
+            if(VendOMatic.products.bays[i].name === name){
+                if(VendOMatic.products.bays[i].inStock <1 ){
+                    return false; 
+                    break;
+                }
+                else{
+                    VendOMatic.products.bays[i].inStock -= 1;
+                    return true;
+                    break;
+                }
+            }
+        }
+    };
     
     VendOMatic.coinSlot.ValidateInsertedCoin = function(COINTYPE){
         
@@ -110,26 +161,23 @@
         return "THANK YOU";
     };
     
+    VendOMatic.LCD.ShowSoldOut= function(){
+        return "SOLD OUT";
+    };
+    
     VendOMatic.LCD.ShowItemPrice = function(prodName){
-        switch(prodName.toString().toUpperCase()){
-            case "COLA":{
-                    return "PRICE : $1.00";
-                    break;
-            }
-            case "CHIPS":{
-                    return "PRICE : $0.50";
-                    break;
-            }
-            case "CANDY":{
-                    return "PRICE : $0.65";
-                    break;
+        
+        for(var i=0; i<VendOMatic.products.bays.length; i++){
+            if(VendOMatic.products.bays[i].name === prodName.toString().toUpperCase()){
+                return "PRICE : $"+VendOMatic.products.bays[i].price;
+                break;
             }
         }
     };
     
     VendOMatic.coinBank.CanMakeChange = function (){
         
-        if(bankTotalHoldings===0){
+        if(bankTotalHoldings===0||bankTotalHoldings<1.0){
             return false;
         }
         else{
@@ -175,36 +223,26 @@
     };
     
     VendOMatic.products.Order = function(prodName){
-        switch(prodName.toString().toUpperCase()){
-            case "COLA":{
-                    if(currentTotalPurchaseAmount>=1.0){
-                        VendOMatic.coinBank.AddSlotChangeToBank();
-                        return VendOMatic.LCD.ShowThankYou();
+        
+        prodName = prodName.toString().toUpperCase();
+        
+        for(var i=0; i<VendOMatic.products.bays.length; i++){
+            if(VendOMatic.products.bays[i].name === prodName){
+                if(currentTotalPurchaseAmount >= VendOMatic.products.bays[i].price){
+                    if(VendOMatic.products.Dispense(prodName)){
+                       VendOMatic.coinBank.AddSlotChangeToBank();
+                       return VendOMatic.LCD.ShowThankYou();  
+                       break;
                     }else{
-                        return VendOMatic.LCD.ShowItemPrice("COLA");
+                        return VendOMatic.LCD.ShowSoldOut();
+                        break;
                     }
-                    break;
-            } 
-            case "CHIPS":{
-                    if(currentTotalPurchaseAmount>=0.5){
-                        VendOMatic.coinBank.AddSlotChangeToBank();
-                        return VendOMatic.LCD.ShowThankYou();
-                    }else{
-                        return VendOMatic.LCD.ShowItemPrice("CHIPS");
+                }
+                else{
+                        return VendOMatic.LCD.ShowItemPrice(prodName);
+                        break;
                     }
-                    break;
-            } 
-            case "CANDY":{
-                    if(currentTotalPurchaseAmount>=0.65){
-                        VendOMatic.coinBank.AddSlotChangeToBank();
-                        return VendOMatic.LCD.ShowThankYou();
-                    }else{
-                        return VendOMatic.LCD.ShowItemPrice("CANDY");
-                    }
-                    break;
             }
-            
-            
         }
     };
     

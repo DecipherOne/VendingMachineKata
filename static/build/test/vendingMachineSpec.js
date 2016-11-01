@@ -10,6 +10,12 @@ var expect = require('../node_modules/chai/chai').expect;
 
 describe("Vending Machine",function(){
     
+    before("Stock The Machine",function(){
+       VendOMatic.products.StockProducts("COLA",1.00,6); 
+       VendOMatic.products.StockProducts("CHIPS",0.5,2);
+       VendOMatic.products.StockProducts("CANDY",0.65,1);
+    });
+    
     describe("Coin Slot",function(){
        describe("Verify Inserted Coin is Valid",function(){
             it("Accepts Dimes,NICKELs,and Quarters",function(){
@@ -114,7 +120,7 @@ describe("Vending Machine",function(){
                c++;
            }while(c<3);
            
-           expect(VendOMatic.products.Order("cola")).to.equal("PRICE : $1.00");
+           expect(VendOMatic.products.Order("cola")).to.equal("PRICE : $1");
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.75");
            
            VendOMatic.coinSlot.ReturnInsertedCoins();
@@ -124,7 +130,7 @@ describe("Vending Machine",function(){
                c++;
            }while(c<1);
            
-           expect(VendOMatic.products.Order("CHIPS")).to.equal("PRICE : $0.50");
+           expect(VendOMatic.products.Order("CHIPS")).to.equal("PRICE : $0.5");
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.25");
            
            VendOMatic.coinSlot.ReturnInsertedCoins();
@@ -138,6 +144,17 @@ describe("Vending Machine",function(){
            expect(VendOMatic.LCD.ShowCurrentPurchaseAmount()).to.equal("0.5");
        });
        
+       it("When a selected item is sold out, SOLD OUT displays.",function(){
+           
+           VendOMatic.products.StockProducts("CHIPS",0.5,0);
+           var c = 0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<3);
+           
+           expect(VendOMatic.products.Order("CHIPS")).to.equal("SOLD OUT");
+        });
       
    });
    
