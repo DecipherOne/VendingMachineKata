@@ -1,3 +1,6 @@
+To execute tests, dependencies will need to be installed using Nodejs package manager.
+Then navigate to where the package.json is located and execute npm test
+
 #Vending Machine Kata
 
 In this exercise you will build the brains of a vending machine. It will accept money, make change, maintain inventory, and dispense products. All the things that you might expect a vending machine to accomplish.
