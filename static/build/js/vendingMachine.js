@@ -12,11 +12,12 @@
     VendOMatic.coinSlot = VendOMatic.coinSlot || {};
     VendOMatic.LCD = VendOMatic.LCD || {};
     VendOMatic.coinBank = VendOMatic.coinBank || {};
+    VendOMatic.coinBank.madeChange = VendOMatic.coinBank.madeChange || {};
     VendOMatic.products = VendOMatic.products || {};
     VendOMatic.products.bays =  VendOMatic.products.bays || new Array(3);
     
-    var numOfDimesInSlot, numOfNickelsInSlot, numOfQuartersInSlot,
-    bankNickles,bankDimes,bankQuarters,bankTotalHoldings,
+    var numOfDimesInSlot = 0, numOfNickelsInSlot = 0, numOfQuartersInSlot = 0,
+    bankNickles= 0,bankDimes= 0,bankQuarters= 0,bankTotalHoldings= 0,
     currentTotalPurchaseAmount = 0;
     
    function product(name,price,inStock){
@@ -24,6 +25,7 @@
       this.price = parseFloat(price);
       this.inStock = parseInt(inStock);
     };
+    
     
    
     VendOMatic.products.StockProducts = function(name,price,inStock){
@@ -53,6 +55,8 @@
     };
     
     VendOMatic.products.Dispense = function(name){
+        
+        var purchAmount = currentTotalPurchaseAmount;
         for(var i=0; i<VendOMatic.products.bays.length;i++){
           
             if(VendOMatic.products.bays[i].name === name){
@@ -62,6 +66,9 @@
                 }
                 else{
                     VendOMatic.products.bays[i].inStock -= 1;
+                    if(purchAmount > VendOMatic.products.bays[i].price){
+                       VendOMatic.coinBank.MakeChange(purchAmount, VendOMatic.products.bays[i].price); 
+                    }
                     return true;
                     break;
                 }
@@ -183,6 +190,79 @@
         else{
             return true;    
         }
+    };
+    
+    VendOMatic.coinBank.MakeChange = function(amountInSlot,purchaseAmount){
+        
+        var changeToDispense = decimalAdjust('round',(parseFloat(amountInSlot - purchaseAmount)),-2),
+            changeCalcBuffer = changeToDispense,result = 0,tempMoney=parseFloat(0);
+    
+        if (changeCalcBuffer > 0 && changeCalcBuffer >= .25 && bankQuarters >= 1)
+        {
+            result = changeCalcBuffer / .25;
+            
+            if(result %1 !== 0){
+              result = Math.floor(result); 
+       
+            
+            }
+            
+            if(result>bankQuarters){
+                do{
+
+                    result--;
+
+                }while(result>bankQuarters)
+            }
+
+            bankQuarters -= result;
+            tempMoney += CalcValueOfCoins(0,0,result);
+            changeCalcBuffer = decimalAdjust('round',(changeCalcBuffer -= tempMoney),-2);
+                
+        }  
+
+        if (changeCalcBuffer > 0 && changeCalcBuffer >= .10 && bankDimes >= 1)
+        {
+            result = changeCalcBuffer / .1;
+            if(result %1 !== 0){
+              result = Math.floor(result);
+            }
+           
+           if(result>bankDimes){
+                do{
+
+                    result--;
+
+                }while(result>bankDimes)
+            }
+
+            bankDimes -= result;
+            tempMoney += CalcValueOfCoins(0,result,0);
+            changeCalcBuffer = decimalAdjust('round',(changeCalcBuffer -= tempMoney),-2);
+        }
+
+        if (changeCalcBuffer > 0 && changeCalcBuffer >= .05 && bankNickles >= 1)
+        {
+            result = changeCalcBuffer / .05;
+            if(result %1 !== 0){
+               result = Math.floor(result);
+            }
+            if(result>bankNickles){
+                do{
+
+                    result--;
+
+                }while(result>bankNickles)
+            }
+
+            bankNickles -= result;
+            tempMoney += CalcValueOfCoins(result,0,0);
+            changeCalcBuffer = decimalAdjust('round',(changeCalcBuffer -= tempMoney),-2);
+        }
+        
+        bankTotalHoldings = CalcValueOfCoins(bankNickles,bankDimes,bankQuarters);
+        return this.madeChange = tempMoney;
+
     };
     
     VendOMatic.coinBank.EmptyBank = function(){

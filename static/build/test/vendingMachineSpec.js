@@ -13,10 +13,31 @@ describe("Vending Machine",function(){
     before("Stock The Machine",function(){
        VendOMatic.products.StockProducts("COLA",1.00,6); 
        VendOMatic.products.StockProducts("CHIPS",0.5,2);
-       VendOMatic.products.StockProducts("CANDY",0.65,1);
+       VendOMatic.products.StockProducts("CANDY",0.65,2);
+       VendOMatic.coinBank.AddChangeToBank(2,2,3);
     });
     
     describe("Coin Slot",function(){
+        it("Returns inserted coins to the coin return, when the coin return button is pressed.", function(){
+            
+            VendOMatic.coinSlot.ReturnInsertedCoins();
+            VendOMatic.coinSlot.InsertCoin("Dime");
+            VendOMatic.coinSlot.InsertCoin("NICKEL");
+            VendOMatic.coinSlot.ReturnInsertedCoins();
+            expect(VendOMatic.GetCurrentTotalPurchaseAmount()).to.equal(0);
+        });
+        it("When a product is selected that costs less than the amount of money in the machine, then the remaining amount is placed in the coin return",function(){
+           VendOMatic.coinSlot.ReturnInsertedCoins();
+           var c = 0;
+           do{
+               VendOMatic.coinSlot.InsertCoin("Quarter");
+               c++;
+           }while(c<4);
+           
+           expect(VendOMatic.products.Order("Candy")).to.equal("THANK YOU");
+           expect(VendOMatic.coinBank.madeChange).to.equal(.35);
+           
+        });
        describe("Verify Inserted Coin is Valid",function(){
             it("Accepts Dimes,NICKELs,and Quarters",function(){
                 expect(VendOMatic.coinSlot.InsertCoin("DIME")).to.equal(true);
@@ -44,14 +65,7 @@ describe("Vending Machine",function(){
            }); 
         }); 
         
-        it("Returns inserted coins to the coin return, when the coin return button is pressed.", function(){
-            
-            VendOMatic.coinSlot.ReturnInsertedCoins();
-            VendOMatic.coinSlot.InsertCoin("Dime");
-            VendOMatic.coinSlot.InsertCoin("NICKEL");
-            VendOMatic.coinSlot.ReturnInsertedCoins();
-            expect(VendOMatic.GetCurrentTotalPurchaseAmount()).to.equal(0);
-        });
+        
         
         
     });
